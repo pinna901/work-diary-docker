@@ -21,17 +21,18 @@ jobs:
       - name: Docker Run
         run: |
           cd ~/work-diary
+          # 确保日志目录存在
           mkdir -p logs/nginx logs/python
           
-          # 创建 .env 文件
+          # 在根目录生成 .env
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
           echo "DB_USER=${{ secrets.DB_USER }}" >> .env
           
-          # 核心修复：强制 Docker Compose 读取 .env 并重启
-          docker compose --env-file .env up -d --build
+          # 部署
+          docker compose up -d --build
           
-          # 部署完后删除临时文件（为了安全，本地看不见它是正常的）
+          # 部署后删除敏感文件
           rm .env
 
       - name: Cleanup

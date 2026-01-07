@@ -13,17 +13,18 @@ services:
       - python-app
 
   python-app:
-    build: .
+    # 路径修复：指向 python-app 文件夹
+    build: ./python-app
     volumes:
-      - .:/app
+      - ./python-app:/app
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
       - ./logs/python:/app/logs
     environment:
-      # 严格的 Key: Value 格式
       TZ: Asia/Shanghai
       FLASK_DEBUG: "1"
       FLASK_APP: app.py
+      # 变量注入
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
