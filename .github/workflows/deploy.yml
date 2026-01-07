@@ -1,29 +1,39 @@
 name: Docker Auto Deploy
 
-# 触发机制：当 main 分支有 push 时触发
 on:
   push:
     branches: [ main ]
 
 jobs:
   deploy-job:
-    # 指定在我们自己配置的 Runner 上运行
     runs-on: self-hosted
+    # 在这里统一设置代理，确保 git pull 和 docker 都能联通
+    env:
+      http_proxy: http://192.168.171.1:7890
+      https_proxy: http://192.168.171.1:7890
 
     steps:
-      # 步骤 1：进入目录并拉取最新代码
       - name: Checkout Code
         run: |
           cd ~/work-diary
-          git pull origin main
+          # 强制拉取，确保同步
+          git fetch origin main
+          git reset --hard origin/main
 
-      # 步骤 2：使用 Docker Compose 重新构建并运行
       - name: Docker Run
         run: |
           cd ~/work-diary
-          # --build 会让 Docker 检查文件变化，有变动就重编镜像
+          
+          # 注入 Secrets 到 .env 文件
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          
+          # 使用新版命令启动
           docker compose up -d --build
+          
+          # 清理临时文件
+          rm .env
 
-      # 步骤 3：清理无用的残留镜像（可选，但推荐）
       - name: Cleanup
         run: docker image prune -f
