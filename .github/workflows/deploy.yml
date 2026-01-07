@@ -21,7 +21,6 @@ jobs:
       - name: Docker Run
         run: |
           cd ~/work-diary
-          # 确保这几行 echo 前面都有正确的空格缩进
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
           echo "DB_USER=${{ secrets.DB_USER }}" >> .env
