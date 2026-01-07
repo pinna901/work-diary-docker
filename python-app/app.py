@@ -10,13 +10,14 @@ app = Flask(__name__)
 
 # ================= 配置区域 =================
 # 从环境变量中读取，读取不到则使用备用值
+
 DB_USER = os.getenv('DB_USER', 'root')
 DB_PASSWORD = os.getenv('DB_PASSWORD', '0901')
 DB_HOST = os.getenv('DB_HOST', 'db')
-DB_NAME = os.getenv('DB_NAME', 'work_diary')
+DB_NAME = os.getenv('DB_NAME', 'work_diary_db')
 
-# 动态构建连接地址
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # 初始化 MySQL(MariaDB)
 db = SQLAlchemy(app)
