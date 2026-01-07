@@ -69,7 +69,7 @@ def get_daily_quote():
             return f"{data['hitokoto']} —— {data['from']}"
     except:
         pass
-    return "生活就像一盒巧克力，你永远不知道下一颗是什么味道。"
+    return "Life was like a box of chocolate, you never know what you are gonna to get. "
 
 # ================= API 接口 =================
 
