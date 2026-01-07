@@ -61,5 +61,5 @@ services:
     volumes:
       - ./mysql_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3306:3306" #DBeaaver could connetc our db with this port
 
