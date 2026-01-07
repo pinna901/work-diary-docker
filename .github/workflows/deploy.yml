@@ -7,7 +7,6 @@ on:
 jobs:
   deploy-job:
     runs-on: self-hosted
-    # 在这里统一设置代理，确保 git pull 和 docker 都能联通
     env:
       http_proxy: http://192.168.171.1:7890
       https_proxy: http://192.168.171.1:7890
@@ -16,23 +15,17 @@ jobs:
       - name: Checkout Code
         run: |
           cd ~/work-diary
-          # 强制拉取，确保同步
           git fetch origin main
           git reset --hard origin/main
 
       - name: Docker Run
         run: |
           cd ~/work-diary
-          
-          # 注入 Secrets 到 .env 文件
+          # 确保这几行 echo 前面都有正确的空格缩进
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
           echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          
-          # 使用新版命令启动
           docker compose up -d --build
-          
-          # 清理临时文件
           rm .env
 
       - name: Cleanup
