@@ -1,0 +1,29 @@
+name: Docker Auto Deploy
+
+# 触发机制：当 main 分支有 push 时触发
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-job:
+    # 指定在我们自己配置的 Runner 上运行
+    runs-on: self-hosted
+
+    steps:
+      # 步骤 1：进入目录并拉取最新代码
+      - name: Checkout Code
+        run: |
+          cd ~/work-diary
+          git pull origin main
+
+      # 步骤 2：使用 Docker Compose 重新构建并运行
+      - name: Docker Run
+        run: |
+          cd ~/work-diary
+          # --build 会让 Docker 检查文件变化，有变动就重编镜像
+          docker-compose up -d --build
+
+      # 步骤 3：清理无用的残留镜像（可选，但推荐）
+      - name: Cleanup
+        run: docker image prune -f
