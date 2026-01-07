@@ -1,0 +1,17 @@
+# 忽略数据库数据目录
+mysql_data/
+redis_data/
+
+# 忽略 Python 缓存文件
+__pycache__/
+*.py[cod]
+
+# 忽略 SSL 证书 (私钥不能泄露)
+certs/
+
+# 忽略日志文件
+logs/
+
+# 忽略 IDE 配置文件 (如果你用了 VSCode/PyCharm)
+.vscode/
+.idea/
