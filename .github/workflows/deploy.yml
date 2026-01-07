@@ -22,7 +22,7 @@ jobs:
         run: |
           cd ~/work-diary
           # --build 会让 Docker 检查文件变化，有变动就重编镜像
-          docker-compose up -d --build
+          docker compose up -d --build
 
       # 步骤 3：清理无用的残留镜像（可选，但推荐）
       - name: Cleanup
