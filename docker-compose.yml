@@ -21,9 +21,9 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     environment:
-      - TZ=Asia/Shanghai
-      - FLASK_DEBUG=1
-      - FLASK_APP=app.py
+      TZ: Asia/Shanghai
+      FLASK_DEBUG: "1"
+      FLASK_APP: app.py
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
