@@ -4,17 +4,21 @@ import redis
 import time
 import json
 import requests
+import os
 
 app = Flask(__name__)
 
 # ================= 配置区域 =================
-# 配置 MySQL 连接
-# 格式: mysql+pymysql://用户名:密码@服务名/数据库名
-# 注意：密码已改为 0901
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:0901@db/work_diary_db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# 从环境变量中读取，读取不到则使用备用值
+DB_USER = os.getenv('DB_USER', 'root')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '0901')
+DB_HOST = os.getenv('DB_HOST', 'db')
+DB_NAME = os.getenv('DB_NAME', 'work_diary')
 
-# 初始化 MySQL
+# 动态构建连接地址
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+
+# 初始化 MySQL(MariaDB)
 db = SQLAlchemy(app)
 
 # 初始化 Redis (保持不变)

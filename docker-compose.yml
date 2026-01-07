@@ -24,6 +24,10 @@ services:
       - TZ=Asia/Shanghai
       - FLASK_DEBUG=1
       - FLASK_APP=app.py
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_HOST: db
     deploy:
       replicas: 1
     dns:
@@ -52,12 +56,28 @@ services:
     restart: always
     # 设置默认密码和数据库名 (这是 MySQL 镜像特有的环境变量)
     environment:
-      # 给密码加上双引号，强制识别为字符串
-      MYSQL_ROOT_PASSWORD: "0901"
-      MYSQL_DATABASE: work_diary_db
+    # 使用 ${VAR} 语法引用变量
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
     # 数据持久化 (挂载到本地的 mysql_data 目录)
     volumes:
       - ./mysql_data:/var/lib/mysql
     # 端口映射 (可选：如果你想用 Windows 上的 Navicat/DBeaver 连接它，就打开)
     ports:
       - "3306:3306"
+
+  - name: Docker Run
+        run: |
+          cd ~/work-diary
+
+          # 创建一个临时的 .env 文件，把 GitHub Secrets 写入其中
+          # Docker Compose 会自动识别当前目录下的 .env 文件
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+
+          # 启动容器
+          docker compose up -d --build
+
+          # 启动后立即删除敏感的 .env 文件，防止泄露
+          rm .env
