@@ -21,18 +21,17 @@ jobs:
       - name: Docker Run
         run: |
           cd ~/work-diary
-          # 确保日志目录存在
           mkdir -p logs/nginx logs/python
           
-          # 在根目录生成 .env
+          # 生成临时 .env 文件
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
           echo "DB_USER=${{ secrets.DB_USER }}" >> .env
           
-          # 部署
+          # 启动容器
           docker compose up -d --build
           
-          # 部署后删除敏感文件
+          # 销毁证据
           rm .env
 
       - name: Cleanup
