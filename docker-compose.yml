@@ -1,4 +1,19 @@
-services:  # <--- 你之前少了这一行！所有的容器定义都必须在 services 下面
+services: 
+
+  nginx:
+    image: nginx:latest
+    container_name: work-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # 假设你的 nginx.conf 在项目根目录的 nginx 文件夹里
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+        # 如果有 SSL 证书
+      # - ./cert:/etc/nginx/cert
+    depends_on:
+      - python-app
+
   python-app:
     build: ./python-app
     volumes:
@@ -27,7 +42,11 @@ services:  # <--- 你之前少了这一行！所有的容器定义都必须在 s
     image: mariadb:10.6
     container_name: work-mysql
     environment:
+      # 同时设置这两个，确保万无一失
+      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+      MARIADB_DATABASE: ${DB_NAME}
       MYSQL_DATABASE: ${DB_NAME}
     volumes:
       - ./mysql_data:/var/lib/mysql
