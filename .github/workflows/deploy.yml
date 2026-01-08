@@ -9,6 +9,21 @@ on:
 jobs:
   deploy-job:
     runs-on: self-hosted
+
+    steps:
+      - name: Pre-cleanup
+        run: |
+          echo "强制清理目录..."
+          # 这里使用 GitHub 提供的环境变量来获取绝对路径，确保删对地方
+          WORK_DIR=${{ github.workspace }}
+          if [ -d "$WORK_DIR" ]; then
+            echo "正在清理: $WORK_DIR"
+            sudo rm -rf "$WORK_DIR"/*
+            sudo rm -rf "$WORK_DIR"/.* || true  # 清理隐藏文件如 .git
+          else
+            echo "目录不存在，跳过清理"
+          fi
+
     env:
       # 代理设置保留，这在拉取镜像时很重要
       http_proxy: http://192.168.171.1:7890
@@ -32,8 +47,13 @@ jobs:
           # 建议把 Flask 的 Secret Key 也加进去
           # echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
 
+          # n. (新增) 先尝试停止并移除当前项目定义的容器
+          # 这能避免很多冲突，虽然对于跨目录的同名容器不一定 100% 有效，但在 CI 流程中是好习惯
+          echo "停止旧容器..."
+          docker compose --env-file .env down || true
+
+          # 3. 启动新容器
           echo "开始构建并启动容器..."
-          # 显式指定使用 .env 文件 (虽然 compose 默认会读，但显式指定更安全)
           docker compose --env-file .env up -d --build --remove-orphans
 
           echo "清理敏感文件..."
