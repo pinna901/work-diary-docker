@@ -3,64 +3,51 @@ name: Docker Auto Deploy
 on:
   push:
     branches: [ main ]
-  # 允许手动触发，方便测试
   workflow_dispatch:
 
 jobs:
   deploy-job:
     runs-on: self-hosted
+    env:
+      # 代理放在这里全局生效
+      http_proxy: http://192.168.171.1:7890
+      https_proxy: http://192.168.171.1:7890
 
+    # 只有一个 steps 关键字！
     steps:
+      # 1. 强制清理 (Pre-cleanup)
       - name: Pre-cleanup
         run: |
           echo "强制清理目录..."
-          # 这里使用 GitHub 提供的环境变量来获取绝对路径，确保删对地方
           WORK_DIR=${{ github.workspace }}
           if [ -d "$WORK_DIR" ]; then
             echo "正在清理: $WORK_DIR"
             sudo rm -rf "$WORK_DIR"/*
-            sudo rm -rf "$WORK_DIR"/.* || true  # 清理隐藏文件如 .git
+            sudo rm -rf "$WORK_DIR"/.* || true
           else
             echo "目录不存在，跳过清理"
           fi
 
-    env:
-      # 代理设置保留，这在拉取镜像时很重要
-      http_proxy: http://192.168.171.1:7890
-      https_proxy: http://192.168.171.1:7890
-
-    steps:
-      # 1. 使用官方插件拉取代码 (自动处理目录，比手动 git pull 更稳健)
+      # 2. 拉取代码
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. 生成环境变量文件 & 启动部署
+      # 3. 部署
       - name: Deploy with Docker Compose
         run: |
-          # 这里的操作都是在当前代码目录下进行的，不需要 cd ~/work-diary
-
           echo "正在生成 .env 文件..."
-          # 注意：这里的变量名要和你 Python 代码 os.getenv('变量名') 以及 docker-compose.yml 里的一致
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          # 建议把 Flask 的 Secret Key 也加进去
-          # echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-
-          # n. (新增) 先尝试停止并移除当前项目定义的容器
-          # 这能避免很多冲突，虽然对于跨目录的同名容器不一定 100% 有效，但在 CI 流程中是好习惯
+          
           echo "停止旧容器..."
           docker compose --env-file .env down || true
 
-          # 3. 启动新容器
           echo "开始构建并启动容器..."
           docker compose --env-file .env up -d --build --remove-orphans
-
-          echo "清理敏感文件..."
+          
           rm .env
 
-      # 3. 清理工作
+      # 4. 清理镜像
       - name: Cleanup
         run: |
-          echo "清理虚悬镜像..."
           docker image prune -f
