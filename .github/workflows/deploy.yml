@@ -35,24 +35,24 @@ jobs:
       # 3. 部署
 
       - name: Deploy with Docker Compose
+        # 1. 关键修改：先将 Secret 映射为环境变量
+        env:
+          DEBUG_PWD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         run: |
           echo "🚧 进入调试模式..."
-          
-          # 1. 打印 Secret 的长度（不打印内容，只看是不是 0）
-          # 如果这里输出 0，说明 GitHub 根本没把密码传过来
-          SECRET_LEN=${#{{ secrets.MYSQL_ROOT_PASSWORD }}}
-          echo "当前 Secret 长度为: $SECRET_LEN"
+
+          # 2. 打印长度 (这次不会报错了)
+          echo "GitHub Secret 长度: ${#DEBUG_PWD}"
 
           echo "正在生成 .env 文件..."
-          
+
           # ==========================================
-          # ⚠️ 临时暴力测试：直接写死密码！
-          # 不要用 secrets 了，直接写 password123
+          # ⚠️ 暴力测试：直接写死密码！
+          # 我们不依赖 Secret 了，直接用 'password123'
           # ==========================================
           echo "MYSQL_ROOT_PASSWORD=password123" > .env
           echo "DB_NAME=work_diary_db" >> .env
-          
-          # 打印一下 .env 文件的内容确认一下（生产环境不要这样做）
+
           echo "--- .env 内容预览 ---"
           cat .env
           echo "---------------------"
@@ -62,9 +62,10 @@ jobs:
 
           echo "开始构建并启动容器..."
           docker compose --env-file .env up -d --build --remove-orphans
-          
-          # ⚠️ 调试期间，先不要删除 .env，方便你进去检查
+
+          # 调试期间保留 .env
           # rm .env
+
 
       # 4. 清理镜像
       - name: Cleanup
