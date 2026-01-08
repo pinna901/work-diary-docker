@@ -1,19 +1,16 @@
-version: '3'
-
-services:
+services:  # <--- 你之前少了这一行！所有的容器定义都必须在 services 下面
   python-app:
     build: ./python-app
     volumes:
       - ./python-app:/app
       - ./logs/python:/app/logs
     environment:
-      - FLASK_DEBUG=0  # 生产环境建议关掉 DEBUG
+      - FLASK_DEBUG=0
       - FLASK_APP=app.py
       - TZ=Asia/Shanghai
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - DB_HOST=db
-      - MYSQL_DATABASE=${DB_NAME} 
-      
+      - MYSQL_DATABASE=${DB_NAME}
     depends_on:
       - redis
       - db
@@ -30,9 +27,7 @@ services:
     image: mariadb:10.6
     container_name: work-mysql
     environment:
-      # ⚠️ 不要写死，使用相同的变量
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      # 确保数据库创建时的库名和 Python 连的库名一致
       MYSQL_DATABASE: ${DB_NAME}
     volumes:
       - ./mysql_data:/var/lib/mysql
