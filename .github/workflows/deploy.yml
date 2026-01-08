@@ -3,38 +3,44 @@ name: Docker Auto Deploy
 on:
   push:
     branches: [ main ]
+  # 允许手动触发，方便测试
+  workflow_dispatch:
 
 jobs:
   deploy-job:
     runs-on: self-hosted
     env:
+      # 代理设置保留，这在拉取镜像时很重要
       http_proxy: http://192.168.171.1:7890
       https_proxy: http://192.168.171.1:7890
 
     steps:
+      # 1. 使用官方插件拉取代码 (自动处理目录，比手动 git pull 更稳健)
       - name: Checkout Code
-        run: |
-          cd ~/work-diary
-          git fetch origin main
-          git reset --hard origin/main
+        uses: actions/checkout@v4
 
-      - name: Docker Run
+      # 2. 生成环境变量文件 & 启动部署
+      - name: Deploy with Docker Compose
         run: |
-          cd ~/work-diary
-          mkdir -p logs/nginx logs/python
-          
-          # 生成临时 .env 文件
+          # 这里的操作都是在当前代码目录下进行的，不需要 cd ~/work-diary
+
+          echo "正在生成 .env 文件..."
+          # 注意：这里的变量名要和你 Python 代码 os.getenv('变量名') 以及 docker-compose.yml 里的一致
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
           echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          
-          # 启动容器
-          docker compose up -d --build
-          
-          # 销毁证据
+          # 建议把 Flask 的 Secret Key 也加进去
+          # echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+
+          echo "开始构建并启动容器..."
+          # 显式指定使用 .env 文件 (虽然 compose 默认会读，但显式指定更安全)
+          docker compose --env-file .env up -d --build --remove-orphans
+
+          echo "清理敏感文件..."
           rm .env
 
+      # 3. 清理工作
       - name: Cleanup
         run: |
+          echo "清理虚悬镜像..."
           docker image prune -f
-          docker builder prune --filter "until=24h" -f
