@@ -44,12 +44,11 @@ async function clockIn() {
 
     } catch (e) {
         console.error("JS 报错:", e);
-        // 这里会直接弹窗告诉你具体的错误原因
         alert("❌ 打卡流程出错:\n" + e.message);
     }
 }
 
-// 增加了详细的错误捕捉 ---
+// 错误捕捉 ---
 
 async function addDiary() {
         const content = document.getElementById('diary-input').value;
