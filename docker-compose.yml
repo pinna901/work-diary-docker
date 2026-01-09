@@ -32,7 +32,7 @@ services:
     image: redis:alpine
     container_name: work-redis
     volumes:
-      - /home/pinna/my_prod_data/redis_data:/data                  #（新增了安全文件存放位置）
+      - /home/pinna/my_prod_data/redis_data:/data        #（新增了安全文件存放位置）
     command: redis-server --appendonly yes
     restart: always
 
