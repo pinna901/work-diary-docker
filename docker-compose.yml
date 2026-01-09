@@ -32,7 +32,7 @@ services:
     image: redis:alpine
     container_name: work-redis
     volumes:
-      - ./redis_data:/data
+      - /home/pinna/my_prod_data/redis_data:/data                  #（新增了安全文件存放位置）
     command: redis-server --appendonly yes
     restart: always
 
@@ -47,4 +47,5 @@ services:
       MARIADB_DATABASE: ${DB_NAME}
       MYSQL_DATABASE: ${DB_NAME}
     volumes:
-      - ./mysql_data:/var/lib/mysql
+      - /home/pinna/my_prod_data/mysql_data:/var/lib/mysql  #（新增了安全文件存放位置）
+    restart: always
