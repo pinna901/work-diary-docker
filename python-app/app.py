@@ -6,6 +6,10 @@ import json
 import requests
 import os
 
+#测试函数
+def add(a, b):
+    return a + b
+
 app = Flask(__name__)
 
 # ================= 配置区域 =================
