@@ -5,10 +5,8 @@ import time
 import json
 import requests
 import os
+from utils import add
 
-#测试函数
-def add(a, b):
-    return a + b
 
 app = Flask(__name__)
 
