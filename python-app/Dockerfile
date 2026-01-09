@@ -6,6 +6,7 @@ RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua
 
 RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
-COPY app.py .
+# 把当前目录下的所有东西，都复制到容器的 /app 目录下
+COPY . .
 EXPOSE 5000
 CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
