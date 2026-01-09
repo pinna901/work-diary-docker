@@ -8,8 +8,9 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-      # [新增] 把项目里的 html 文件夹挂载到 Nginx 的默认网站目录
+      # 把项目里的 html 文件夹挂载到 Nginx 的默认网站目录
       - ./html:/usr/share/nginx/html
+      - ./certs:/etc/nginx/certs
     depends_on:
       - python-app
   python-app:
