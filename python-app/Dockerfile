@@ -4,6 +4,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
+
 RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
 # 把当前目录下的所有东西，都复制到容器的 /app 目录下
