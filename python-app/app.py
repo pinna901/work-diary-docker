@@ -6,6 +6,7 @@ import json
 import requests
 import os
 from utils import add
+from groq import Groq
 
 
 app = Flask(__name__)
@@ -13,6 +14,9 @@ app = Flask(__name__)
 # ================= 配置区域 =================
 # 从环境变量中读取，读取不到则使用备用值
 
+groq_client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
 db_password = os.getenv('MYSQL_ROOT_PASSWORD', '0901')
 db_host = os.getenv('DB_HOST', 'db')
 db_name = os.getenv('MYSQL_DATABASE', 'work_diary_db')
@@ -140,3 +144,38 @@ def get_diary():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
+
+@app.route('/api/ai-polish', methods=['POST'])
+def ai_polish():
+    data = request.get_json()
+    raw_content = data.get('content', '')
+
+    if not raw_content:
+        return jsonify({"error": "写点东西再让我润色嘛"}), 400
+
+    try:
+        # 调用 Llama 3.3
+        completion = groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "system", 
+                    "content": "你是一个专业的程序员日报助手。请把用户输入的简单描述，联想到一段你觉得有意义的话，语气积极向上，字数30字左右。直接输出日报内容，不要加'好的'等废话。"
+                },
+                {
+                    "role": "user", 
+                    "content": raw_content
+                }
+            ],
+            temperature=0.7,
+            max_tokens=500
+        )
+        
+        # 获取回复
+        polished_text = completion.choices[0].message.content
+        return jsonify({"result": polished_text})
+
+    except Exception as e:
+        print(f"Groq 调用失败: {e}")
+        # 返回 500 错误给前端
+        return jsonify({"error": str(e)}), 500

@@ -57,6 +57,7 @@ jobs:
         env:
           ENV_MYSQL_PASS: ${{ secrets.MYSQL_ROOT_PASSWORD }}
           ENV_DB_NAME: ${{ secrets.DB_NAME }}
+          ENV_GROQ_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           echo "正在生成 .env 文件..."
 
@@ -66,9 +67,10 @@ jobs:
             exit 1
           fi
 
-          # 从环境变量写入 .env
           echo "MYSQL_ROOT_PASSWORD=$ENV_MYSQL_PASS" > .env
           echo "DB_NAME=$ENV_DB_NAME" >> .env
+          
+          echo "GROQ_API_KEY=$ENV_GROQ_KEY" >> .env
 
           echo "停止旧容器..."
           docker compose --env-file .env down || true
@@ -78,6 +80,8 @@ jobs:
 
           echo "清理敏感文件..."
           rm .env
+
+          
 
       # 4. 清理镜像
       - name: Cleanup

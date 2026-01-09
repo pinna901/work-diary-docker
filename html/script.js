@@ -80,3 +80,43 @@ async function loadDiaries() {
             listDiv.appendChild(item);
         });
     }
+
+// 新增：调用 AI 生成日记内容
+async function askAI() {
+    const input = document.getElementById('diary-input');
+    const content = input.value;
+    const btn = document.querySelector('button[onclick="askAI()"]');
+
+    if (!content) {
+        alert("请先输入一些关键词，比如：'修复登录bug，很累'");
+        return;
+    }
+
+    // 按钮变态（防止重复点击）
+    const originalText = btn.innerText;
+    btn.innerText = "🔮 施法中...";
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(`${API_BASE}/ai-polish`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: content })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            // 把 AI 写好的话填回输入框
+            input.value = data.result;
+        } else {
+            alert("AI 罢工了: " + data.error);
+        }
+    } catch (e) {
+        alert("网络请求失败: " + e.message);
+    } finally {
+        // 恢复按钮
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+}
