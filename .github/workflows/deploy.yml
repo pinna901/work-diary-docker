@@ -38,18 +38,26 @@ jobs:
       # ==========================================
       - name: Run Unit Tests
         run: |
-          echo "🧪 开始自动化测试..."
-          
-          # 1. 先构建 Python 镜像 (带 pytest 的)
-          docker build -t test-image ./python-app
-          
-          # 2. 在容器里运行 pytest
-          # --rm 表示跑完就删掉临时容器
-          # 如果 pytest 发现错误，会返回 exit code 1，GitHub Actions 就会在这里报错停止
-          docker run --rm test-image pytest
+          echo "🔎 runner 上 python-app 目录内容："
+          ls -la ./python-app
 
-          echo "✅ 测试通过！准备部署..."
+          echo "🔎 runner 上 python-app 里的测试文件："
+          find ./python-app -maxdepth 1 -type f -name "test_*.py" -o -name "*_test.py" || true
 
+          echo "🏗️ docker build（禁用缓存，避免用旧镜像）："
+          docker build --no-cache -t test-image ./python-app
+
+          echo "🔎 镜像内 /app 内容："
+          docker run --rm test-image sh -lc "pwd; ls -la; find . -maxdepth 1 -type f -name 'test_*.py' -o -name '*_test.py' || true"
+
+          echo "🔎 pytest 收集情况："
+          docker run --rm test-image pytest -q --collect-only
+
+          echo "▶ 正式执行测试："
+          docker run --rm test-image pytest -q
+
+
+         
 
       # 3. 部署
       - name: Deploy with Docker Compose
