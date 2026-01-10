@@ -25,6 +25,7 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - DB_HOST=db
       - MYSQL_DATABASE=${DB_NAME}
+      - GROQ_API_KEY=${GROQ_API_KEY}
     depends_on:
       - redis
       - db
