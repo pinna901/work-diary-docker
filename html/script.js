@@ -120,3 +120,47 @@ async function askAI() {
         btn.disabled = false;
     }
 }
+
+/**
+ * 切换赛博朋克主题
+ */
+function toggleTheme() {
+    const body = document.body;
+    const themeIcon = document.getElementById('theme-icon');
+    
+    // 切换 cyberpunk-mode 类
+    body.classList.toggle('cyberpunk-mode');
+    
+    // 检查当前主题
+    const isCyberpunk = body.classList.contains('cyberpunk-mode');
+    
+    // 更新图标
+    if (themeIcon) {
+        themeIcon.textContent = isCyberpunk ? '🌙' : '🔄';
+    }
+    
+    // 保存到 localStorage
+    localStorage.setItem('theme', isCyberpunk ? 'cyberpunk' : 'default');
+    
+    // 可选：添加切换时的视觉反馈
+    console.log(`主题已切换至: ${isCyberpunk ? '赛博朋克模式' : '默认模式'}`);
+}
+
+/**
+ * 页面加载时初始化主题（如果 script.js 中需要额外的初始化逻辑）
+ * 注意：主要的主题应用已经在 HTML 的内联脚本中完成
+ */
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    if (savedTheme === 'cyberpunk') {
+        document.body.classList.add('cyberpunk-mode');
+        if (themeIcon) {
+            themeIcon.textContent = '🌙';
+        }
+    }
+}
+
+// 如果页面需要在 DOM 完全加载后再次确认主题（可选）
+// window.addEventListener('DOMContentLoaded', initTheme);

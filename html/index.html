@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle-btn" onclick="toggleTheme()">
+        <span id="theme-icon">🔄</span> 切换风格
+    </button>
+
     <div class="particles">
         <div class="particle"></div>
         <div class="particle"></div>
@@ -36,6 +41,15 @@
 
     <div id="diary-list"></div>
 
+    <script>
+        // 页面加载时立即应用保存的主题，避免闪烁
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'cyberpunk') {
+                document.body.classList.add('cyberpunk-mode');
+            }
+        })();
+    </script>
     <script src="script.js"></script>
 </body>
 </html>

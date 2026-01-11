@@ -278,4 +278,232 @@ button[onclick="askAI()"] {
     .count {
         font-size: 60px;
     }
+}
+
+/* ========== 主题切换按钮 ========== */
+.theme-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.theme-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+/* ========== 赛博朋克模式 ========== */
+
+/* 赛博朋克模式的 body 背景 */
+body.cyberpunk-mode {
+    background: #050801;
+    background-image: 
+        linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(rgba(255, 0, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 255, 0.05) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+    animation: cyberpunk-grid 20s linear infinite;
+}
+
+@keyframes cyberpunk-grid {
+    0% {
+        background-position: 0 0, 0 0, 0 0, 0 0;
+    }
+    100% {
+        background-position: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    }
+}
+
+/* 赛博朋克模式的卡片样式 */
+body.cyberpunk-mode .card {
+    background: rgba(10, 10, 30, 0.9);
+    border: 2px solid #00ffff;
+    box-shadow: 
+        0 0 20px rgba(0, 255, 255, 0.5),
+        0 0 40px rgba(255, 0, 255, 0.3),
+        inset 0 0 20px rgba(0, 255, 255, 0.1);
+    color: #e0e0e0;
+}
+
+body.cyberpunk-mode .card h3 {
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
+body.cyberpunk-mode .card:hover {
+    border-color: #ff00ff;
+    box-shadow: 
+        0 0 30px rgba(255, 0, 255, 0.6),
+        0 0 60px rgba(0, 255, 255, 0.4),
+        inset 0 0 30px rgba(255, 0, 255, 0.2);
+}
+
+/* 赛博朋克模式的天数计数器 */
+body.cyberpunk-mode .count {
+    color: #00ff00;
+    text-shadow: 
+        0 0 10px rgba(0, 255, 0, 0.8),
+        0 0 20px rgba(0, 255, 0, 0.6),
+        0 0 30px rgba(0, 255, 0, 0.4);
+    animation: cyberpunk-pulse 2s ease-in-out infinite;
+}
+
+@keyframes cyberpunk-pulse {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow: 
+            0 0 10px rgba(0, 255, 0, 0.8),
+            0 0 20px rgba(0, 255, 0, 0.6),
+            0 0 30px rgba(0, 255, 0, 0.4);
+    }
+    50% {
+        transform: scale(1.05);
+        text-shadow: 
+            0 0 20px rgba(0, 255, 0, 1),
+            0 0 30px rgba(0, 255, 0, 0.8),
+            0 0 40px rgba(0, 255, 0, 0.6);
+    }
+}
+
+/* 赛博朋克模式的按钮 */
+body.cyberpunk-mode button {
+    background: linear-gradient(45deg, #00ffff, #ff00ff);
+    border: 1px solid #00ffff;
+    box-shadow: 
+        0 0 10px rgba(0, 255, 255, 0.5),
+        0 0 20px rgba(255, 0, 255, 0.3);
+    color: #000;
+    font-weight: bold;
+}
+
+body.cyberpunk-mode button:hover {
+    box-shadow: 
+        0 0 20px rgba(0, 255, 255, 0.8),
+        0 0 30px rgba(255, 0, 255, 0.6);
+    border-color: #ff00ff;
+}
+
+body.cyberpunk-mode button[onclick="askAI()"] {
+    background: linear-gradient(45deg, #ff00ff, #00ffff);
+    animation: cyberpunk-rainbow 3s linear infinite;
+}
+
+@keyframes cyberpunk-rainbow {
+    0% { filter: hue-rotate(0deg) brightness(1.2); }
+    100% { filter: hue-rotate(360deg) brightness(1.2); }
+}
+
+/* 赛博朋克模式的输入框和文本框 */
+body.cyberpunk-mode input,
+body.cyberpunk-mode textarea {
+    background: rgba(0, 20, 40, 0.8);
+    border: 2px solid #00ffff;
+    color: #e0e0e0;
+    box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+body.cyberpunk-mode input::placeholder,
+body.cyberpunk-mode textarea::placeholder {
+    color: #888;
+}
+
+body.cyberpunk-mode input:focus,
+body.cyberpunk-mode textarea:focus {
+    border-color: #ff00ff;
+    box-shadow: 
+        0 0 10px rgba(255, 0, 255, 0.5),
+        inset 0 0 15px rgba(255, 0, 255, 0.3);
+}
+
+/* 赛博朋克模式的日记项 */
+body.cyberpunk-mode .diary-item {
+    background: rgba(20, 20, 40, 0.9);
+    border-left: 4px solid #00ffff;
+    color: #d0d0d0;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+body.cyberpunk-mode .diary-item:hover {
+    background: rgba(30, 30, 50, 0.95);
+    border-left-color: #ff00ff;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+}
+
+body.cyberpunk-mode .diary-quote {
+    color: #aaa;
+    border-top-color: #444;
+}
+
+/* 赛博朋克模式的状态消息 */
+body.cyberpunk-mode #status-msg {
+    color: #00ffff !important;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+}
+
+/* 赛博朋克模式的粒子 */
+body.cyberpunk-mode .particle {
+    background: rgba(0, 255, 255, 0.6);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
+/* 赛博朋克模式的主题切换按钮 */
+body.cyberpunk-mode .theme-toggle-btn {
+    background: linear-gradient(45deg, #00ffff, #ff00ff);
+    border: 1px solid #00ffff;
+    color: #000;
+    box-shadow: 
+        0 0 15px rgba(0, 255, 255, 0.6),
+        0 0 25px rgba(255, 0, 255, 0.4);
+}
+
+body.cyberpunk-mode .theme-toggle-btn:hover {
+    box-shadow: 
+        0 0 20px rgba(0, 255, 255, 0.8),
+        0 0 35px rgba(255, 0, 255, 0.6);
+}
+
+/* 添加扫描线效果 */
+body.cyberpunk-mode::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 255, 0.03) 0px,
+        rgba(0, 255, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    z-index: 999;
+    animation: scanlines 8s linear infinite;
+}
+
+@keyframes scanlines {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(50px);
+    }
 } 
