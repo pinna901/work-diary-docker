@@ -1,7 +1,38 @@
 // script.js
+
+// ========== 主题切换功能 ==========
+
+// 页面加载时检查并应用保存的主题
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'night') {
+        document.body.classList.add('night-mode');
+    }
+}
+
+// 切换主题函数
+function toggleTheme() {
+    const body = document.body;
+    body.classList.toggle('night-mode');
+    
+    // 保存主题选择到 localStorage
+    if (body.classList.contains('night-mode')) {
+        localStorage.setItem('theme', 'night');
+    } else {
+        localStorage.setItem('theme', 'day');
+    }
+}
+
+// 在页面加载时初始化主题
+initTheme();
+
 const API_BASE = '/api';
 
-window.onload = function() { checkStatus(); loadDiaries(); };
+window.onload = function() { 
+    initTheme(); // 确保主题初始化
+    checkStatus(); 
+    loadDiaries(); 
+};
 
 async function checkStatus() {
     try {
