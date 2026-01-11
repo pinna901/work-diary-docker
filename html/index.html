@@ -7,23 +7,30 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="card">
-        <h3>The officially recorded days i've survived from back-breaking labor</h3>
-        <div class="count" id="day-count">--</div>
-        <div id="status-msg" style="font-size: 12px; color: gray;">连接中...</div>
-        <button onclick="clockIn()"> 立即打卡</button>
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
 
     <div class="card">
-            <h3>Write Down Your Story</h3>
+        <h3>🎯 The officially recorded days i've survived from back-breaking labor</h3>
+        <div class="count" id="day-count">--</div>
+        <div id="status-msg" style="font-size: 12px; color: gray;">连接中...</div>
+        <button onclick="clockIn()">⏰ 立即打卡</button>
+    </div>
+
+    <div class="card">
+            <h3>✍️ Write Down Your Story</h3>
             <!-- 改用 textarea 方便看长文本 -->
             <textarea id="diary-input" rows="4" style="width: 90%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;" placeholder="今天发生了什么？(输入关键词，让 AI 帮你写)"></textarea>
             
             <div style="margin-top: 10px;">
                 <!-- 新增：AI 魔法按钮 -->
-                <button onclick="askAI()" style="background-color: #9b59b6;">AI assistant</button>
-                <button onclick="addDiary()"> Save </button>
+                <button onclick="askAI()" style="background-color: #9b59b6;">🤖 AI assistant</button>
+                <button onclick="addDiary()">💾 Save </button>
             </div>
         </div>
 
