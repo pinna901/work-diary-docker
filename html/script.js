@@ -1,8 +1,8 @@
 // script.js
 
-// ========== 主题切换功能 ==========
+// ========== Theme Toggle Feature ==========
 
-// 页面加载时检查并应用保存的主题
+// Check and apply saved theme on page load
 function initTheme() {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'night') {
@@ -10,12 +10,12 @@ function initTheme() {
     }
 }
 
-// 切换主题函数
+// Toggle theme function
 function toggleTheme() {
     const body = document.body;
     body.classList.toggle('night-mode');
     
-    // 保存主题选择到 localStorage
+    // Save theme selection to localStorage
     if (body.classList.contains('night-mode')) {
         localStorage.setItem('theme', 'night');
     } else {
@@ -23,13 +23,12 @@ function toggleTheme() {
     }
 }
 
-// 在页面加载时初始化主题
+// Initialize theme on page load
 initTheme();
 
 const API_BASE = '/api';
 
 window.onload = function() { 
-    initTheme(); // 确保主题初始化
     checkStatus(); 
     loadDiaries(); 
 };
