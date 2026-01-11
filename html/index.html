@@ -47,13 +47,19 @@
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'cyberpunk') {
                 document.body.classList.add('cyberpunk-mode');
-                // 等待 DOM 加载完成后更新图标
-                window.addEventListener('DOMContentLoaded', function() {
-                    const themeIcon = document.getElementById('theme-icon');
-                    if (themeIcon) {
-                        themeIcon.textContent = '🌙';
-                    }
-                });
+                // 在脚本执行时检查 DOM 状态并更新图标
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', updateThemeIcon);
+                } else {
+                    updateThemeIcon();
+                }
+            }
+            
+            function updateThemeIcon() {
+                const themeIcon = document.getElementById('theme-icon');
+                if (themeIcon) {
+                    themeIcon.textContent = '🌙';
+                }
             }
         })();
     </script>
