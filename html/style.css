@@ -1,8 +1,8 @@
 /* style.css - 优化版 */
 
-/* 添加全局平滑过渡 */
+/* 添加全局平滑过渡 - 针对特定属性优化性能 */
 * {
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, opacity 0.3s ease;
 }
 
 body { 
@@ -237,8 +237,8 @@ input:focus, textarea:focus {
 }
 
 @keyframes float {
-    0%, 100% {
-        transform: translateY(100vh) rotate(0deg);
+    0% {
+        transform: translateY(120%) rotate(0deg);
         opacity: 0;
     }
     10% {
@@ -248,7 +248,7 @@ input:focus, textarea:focus {
         opacity: 1;
     }
     100% {
-        transform: translateY(-100vh) rotate(360deg);
+        transform: translateY(-120%) rotate(360deg);
         opacity: 0;
     }
 }
