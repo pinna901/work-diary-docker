@@ -1,7 +1,37 @@
 // script.js
+
+// ========== Theme Toggle Feature ==========
+
+// Check and apply saved theme on page load
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'night') {
+        document.body.classList.add('night-mode');
+    }
+}
+
+// Toggle theme function
+function toggleTheme() {
+    const body = document.body;
+    body.classList.toggle('night-mode');
+    
+    // Save theme selection to localStorage
+    if (body.classList.contains('night-mode')) {
+        localStorage.setItem('theme', 'night');
+    } else {
+        localStorage.setItem('theme', 'day');
+    }
+}
+
+// Initialize theme on page load
+initTheme();
+
 const API_BASE = '/api';
 
-window.onload = function() { checkStatus(); loadDiaries(); };
+window.onload = function() { 
+    checkStatus(); 
+    loadDiaries(); 
+};
 
 async function checkStatus() {
     try {
