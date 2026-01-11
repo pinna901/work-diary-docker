@@ -479,6 +479,21 @@ body.cyberpunk-mode::before {
     }
 }
 
+/* Accessibility: Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    body.cyberpunk-mode::before {
+        animation: none;
+    }
+    
+    body.cyberpunk-mode .count {
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    body.cyberpunk-mode {
+        animation: none;
+    }
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
     body {

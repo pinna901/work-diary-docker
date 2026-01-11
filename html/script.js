@@ -19,10 +19,10 @@ function toggleTheme() {
     // 保存主题设置到 localStorage
     if (body.classList.contains('cyberpunk-mode')) {
         localStorage.setItem('theme', 'cyberpunk');
-        console.log('已切换到赛博朋克模式');
+        console.log('Switched to cyberpunk mode');
     } else {
         localStorage.setItem('theme', 'default');
-        console.log('已切换到默认模式');
+        console.log('Switched to default mode');
     }
 }
 
