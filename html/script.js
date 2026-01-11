@@ -1,6 +1,31 @@
 // script.js
 const API_BASE = '/api';
 
+// ========== 主题切换功能 ==========
+
+// 页面加载时检查保存的主题设置
+document.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'cyberpunk') {
+        document.body.classList.add('cyberpunk-mode');
+    }
+});
+
+// 切换主题函数
+function toggleTheme() {
+    const body = document.body;
+    body.classList.toggle('cyberpunk-mode');
+    
+    // 保存主题设置到 localStorage
+    if (body.classList.contains('cyberpunk-mode')) {
+        localStorage.setItem('theme', 'cyberpunk');
+        console.log('已切换到赛博朋克模式');
+    } else {
+        localStorage.setItem('theme', 'default');
+        console.log('已切换到默认模式');
+    }
+}
+
 window.onload = function() { checkStatus(); loadDiaries(); };
 
 async function checkStatus() {
