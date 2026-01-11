@@ -1,4 +1,44 @@
 // script.js
+
+// ========== 主题切换功能 ==========
+
+// 页面加载时恢复用户选择的主题
+window.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'night') {
+        document.body.classList.add('night-mode');
+        updateToggleButton(true);
+    }
+});
+
+// 切换主题函数
+function toggleTheme() {
+    const body = document.body;
+    const isNightMode = body.classList.contains('night-mode');
+    
+    if (isNightMode) {
+        // 切换到白天
+        body.classList.remove('night-mode');
+        localStorage.setItem('theme', 'day');
+        updateToggleButton(false);
+    } else {
+        // 切换到夜晚
+        body.classList.add('night-mode');
+        localStorage.setItem('theme', 'night');
+        updateToggleButton(true);
+    }
+}
+
+// 更新按钮文字
+function updateToggleButton(isNight) {
+    const button = document.getElementById('theme-toggle');
+    if (button) {
+        button.textContent = isNight ? '☀️ 白天模式' : '🌙 夜晚模式';
+    }
+}
+
+// ========== 原有功能 ==========
+
 const API_BASE = '/api';
 
 window.onload = function() { checkStatus(); loadDiaries(); };

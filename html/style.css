@@ -5,15 +5,274 @@
     transition: all 0.3s ease;
 }
 
+/* ========== 主题切换按钮 ========== */
+#theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    border: 2px solid #ddd;
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+#theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ========== 天气场景容器 ========== */
+.weather-scene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* ========== 白天模式（默认） ========== */
 body { 
     font-family: 'Segoe UI', sans-serif; 
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #FFDAB9 100%);
     background-attachment: fixed;
     display: flex; 
     flex-direction: column; 
     align-items: center; 
     padding: 50px;
     min-height: 100vh;
+    transition: background 1s ease;
+}
+
+/* ========== 太阳 ========== */
+.sun {
+    position: absolute;
+    top: 80px;
+    right: 100px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #FFD700 0%, #FFA500 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 60px #FFD700, 0 0 100px #FFA500;
+    animation: sunRise 2s ease-out;
+    opacity: 1;
+    transition: opacity 1s ease;
+}
+
+@keyframes sunRise {
+    from {
+        transform: translateY(-200px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ========== 月亮 ========== */
+.moon {
+    position: absolute;
+    top: 80px;
+    right: 100px;
+    width: 100px;
+    height: 100px;
+    background: #F0E68C;
+    border-radius: 50%;
+    box-shadow: 0 0 40px #F0E68C, 0 0 80px #DDA0DD;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.moon::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    width: 90px;
+    height: 90px;
+    background: transparent;
+    border-radius: 50%;
+    box-shadow: 25px 0 0 0 #1a1a2e;
+}
+
+/* ========== 星星 ========== */
+.stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px white;
+    animation: twinkle 3s infinite;
+}
+
+.star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+.star:nth-child(2) { top: 20%; left: 50%; animation-delay: 0.5s; }
+.star:nth-child(3) { top: 15%; left: 80%; animation-delay: 1s; }
+.star:nth-child(4) { top: 30%; left: 10%; animation-delay: 1.5s; }
+.star:nth-child(5) { top: 40%; left: 70%; animation-delay: 2s; }
+.star:nth-child(6) { top: 50%; left: 30%; animation-delay: 2.5s; }
+.star:nth-child(7) { top: 60%; left: 60%; animation-delay: 0.8s; }
+.star:nth-child(8) { top: 70%; left: 90%; animation-delay: 1.8s; }
+.star:nth-child(9) { top: 25%; left: 40%; animation-delay: 1.2s; }
+.star:nth-child(10) { top: 35%; left: 85%; animation-delay: 2.2s; }
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* ========== 云朵 ========== */
+.clouds {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    transition: opacity 1s ease;
+}
+
+.cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 100px;
+}
+
+.cloud::before,
+.cloud::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 100px;
+}
+
+.cloud1 {
+    width: 120px;
+    height: 40px;
+    top: 100px;
+    left: -150px;
+    animation: floatCloud 30s linear infinite;
+}
+
+.cloud1::before {
+    width: 50px;
+    height: 50px;
+    top: -25px;
+    left: 20px;
+}
+
+.cloud1::after {
+    width: 60px;
+    height: 40px;
+    top: -15px;
+    right: 20px;
+}
+
+.cloud2 {
+    width: 100px;
+    height: 35px;
+    top: 180px;
+    left: -100px;
+    animation: floatCloud 35s linear infinite;
+    animation-delay: 5s;
+}
+
+.cloud2::before {
+    width: 45px;
+    height: 45px;
+    top: -20px;
+    left: 15px;
+}
+
+.cloud2::after {
+    width: 50px;
+    height: 35px;
+    top: -12px;
+    right: 15px;
+}
+
+.cloud3 {
+    width: 140px;
+    height: 45px;
+    top: 250px;
+    left: -180px;
+    animation: floatCloud 40s linear infinite;
+    animation-delay: 10s;
+}
+
+.cloud3::before {
+    width: 60px;
+    height: 60px;
+    top: -30px;
+    left: 25px;
+}
+
+.cloud3::after {
+    width: 70px;
+    height: 45px;
+    top: -18px;
+    right: 25px;
+}
+
+@keyframes floatCloud {
+    from {
+        left: -200px;
+    }
+    to {
+        left: 110%;
+    }
+}
+
+/* ========== 夜晚模式 ========== */
+body.night-mode {
+    background: linear-gradient(to bottom, #0F2027 0%, #203A43 50%, #2C5364 100%);
+}
+
+body.night-mode .sun {
+    opacity: 0;
+}
+
+body.night-mode .moon {
+    opacity: 1;
+}
+
+body.night-mode .stars {
+    opacity: 1;
+}
+
+body.night-mode .clouds {
+    opacity: 0;
+}
+
+body.night-mode #theme-toggle {
+    background: rgba(50, 50, 70, 0.9);
+    color: white;
+    border-color: #555;
+}
+
+body.night-mode .card {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+body.night-mode .diary-item {
+    background: rgba(255, 255, 255, 0.95);
 }
 
 /* 卡片悬浮和动画效果 */
@@ -277,5 +536,23 @@ button[onclick="askAI()"] {
     
     .count {
         font-size: 60px;
+    }
+    
+    .sun, .moon {
+        width: 80px;
+        height: 80px;
+        right: 30px;
+        top: 50px;
+    }
+    
+    #theme-toggle {
+        top: 10px;
+        right: 10px;
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+    
+    .cloud1, .cloud2, .cloud3 {
+        transform: scale(0.7);
     }
 } 
