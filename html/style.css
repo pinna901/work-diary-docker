@@ -283,7 +283,7 @@ button[onclick="askAI()"] {
 
 /* ========== Theme Toggle System ========== */
 
-/* 主题切换按钮 */
+/* Theme toggle button */
 .theme-toggle-btn {
     position: fixed;
     top: 20px;
@@ -325,7 +325,7 @@ button[onclick="askAI()"] {
     transform: translateY(50px) rotate(180deg);
 }
 
-/* 夜晚模式下的按钮图标切换 */
+/* Night mode button icon switch */
 body.night-mode .theme-toggle-btn .sun-icon {
     opacity: 0;
     transform: translateY(-50px) rotate(-180deg);
@@ -341,7 +341,7 @@ body.night-mode .theme-toggle-btn {
     border-color: #ffd700;
 }
 
-/* 天空装饰容器 */
+/* Sky decoration container */
 .sky-decoration {
     position: fixed;
     top: 0;
@@ -353,12 +353,12 @@ body.night-mode .theme-toggle-btn {
     transition: all 1s ease;
 }
 
-/* 夜晚模式背景 */
+/* Night mode background */
 body.night-mode {
     background: linear-gradient(to bottom, #0a0e27 0%, #1a1a3e 50%, #2d1b4e 100%);
 }
 
-/* 太阳 */
+/* Sun */
 .sun {
     position: absolute;
     top: 80px;
@@ -383,7 +383,7 @@ body.night-mode .sun {
     50% { transform: scale(1.05); }
 }
 
-/* 月亮 */
+/* Moon */
 .moon {
     position: absolute;
     top: 80px;
@@ -412,7 +412,7 @@ body.night-mode .moon {
     transform: translateY(0);
 }
 
-/* 星星 */
+/* Stars */
 .stars {
     position: absolute;
     width: 100%;
@@ -451,7 +451,7 @@ body.night-mode .stars {
     50% { opacity: 0.3; transform: scale(0.8); }
 }
 
-/* 云朵 */
+/* Clouds */
 .clouds {
     position: absolute;
     width: 100%;
@@ -560,7 +560,7 @@ body.night-mode .clouds {
     50% { transform: translateX(100px); }
 }
 
-/* 夜晚模式下卡片的调整 */
+/* Card adjustments in night mode */
 body.night-mode .card {
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
