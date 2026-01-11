@@ -8,6 +8,8 @@ window.addEventListener('DOMContentLoaded', function() {
     if (savedTheme === 'night') {
         document.body.classList.add('night-mode');
         updateToggleButton(true);
+    } else {
+        updateToggleButton(false);
     }
 });
 
@@ -41,7 +43,10 @@ function updateToggleButton(isNight) {
 
 const API_BASE = '/api';
 
-window.onload = function() { checkStatus(); loadDiaries(); };
+window.onload = function() { 
+    checkStatus(); 
+    loadDiaries(); 
+};
 
 async function checkStatus() {
     try {
