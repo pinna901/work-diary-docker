@@ -293,7 +293,7 @@ def ai_polish():
         if not raw_content:
             return jsonify({"error": "写点东西再让我润色嘛"}), 400
 
-        # 调用 Llama 3.3，设置超时
+        # 调用 Llama 3.3
         completion = groq_client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
@@ -307,8 +307,7 @@ def ai_polish():
                 }
             ],
             temperature=0.7,
-            max_tokens=500,
-            timeout=10
+            max_tokens=500
         )
         
         # 获取回复
@@ -321,4 +320,6 @@ def ai_polish():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # 从环境变量读取调试模式，默认关闭
+    debug_mode = os.getenv('FLASK_DEBUG', '0') == '1'
+    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
