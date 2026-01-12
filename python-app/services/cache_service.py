@@ -1,8 +1,11 @@
 import redis
 import json
 import hashlib
+import logging
 from functools import wraps
 from typing import Any, Optional
+
+logger = logging.getLogger(__name__)
 
 class CacheService:
     """缓存服务"""
@@ -18,7 +21,7 @@ class CacheService:
             self.redis.ping()
             self.enabled = True
         except Exception as e:
-            print(f"⚠️  Redis 连接失败: {e}")
+            logger.warning(f"Redis connection failed: {e}")
             self.enabled = False
         
         self.default_ttl = 300
@@ -36,7 +39,7 @@ class CacheService:
                 return json.loads(value)
             self.stats['misses'] += 1
         except Exception as e:
-            print(f"Cache get error: {e}")
+            logger.error(f"Cache get error: {e}")
         return None
     
     def set(self, key: str, value: Any, ttl: int = None) -> bool:
@@ -50,7 +53,7 @@ class CacheService:
             self.redis.setex(key, ttl, serialized)
             return True
         except Exception as e:
-            print(f"Cache set error: {e}")
+            logger.error(f"Cache set error: {e}")
             return False
     
     def delete(self, *keys: str) -> int:
@@ -60,7 +63,7 @@ class CacheService:
         try:
             return self.redis.delete(*keys)
         except Exception as e:
-            print(f"Cache delete error: {e}")
+            logger.error(f"Cache delete error: {e}")
             return 0
     
     def invalidate_pattern(self, pattern: str) -> int:
@@ -72,7 +75,7 @@ class CacheService:
             if keys:
                 return self.redis.delete(*keys)
         except Exception as e:
-            print(f"Cache invalidate error: {e}")
+            logger.error(f"Cache invalidate error: {e}")
         return 0
     
     def cached(self, key_prefix: str, ttl: int = None):

@@ -1,4 +1,7 @@
 import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 class QuoteService:
     """每日一句服务"""
@@ -29,6 +32,6 @@ class QuoteService:
                 
                 return quote
         except Exception as e:
-            print(f"获取每日一句失败: {e}")
+            logger.warning(f"Failed to fetch daily quote: {e}")
         
         return self.default_quote

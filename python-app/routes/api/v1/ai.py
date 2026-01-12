@@ -9,8 +9,7 @@ def ai_polish():
     """AI 文本润色"""
     if not ai_service.is_available():
         return jsonify({
-            'error': 'AI service unavailable',
-            'message': 'GROQ_API_KEY not configured'
+            'error': 'AI service temporarily unavailable'
         }), 503
     
     data = request.get_json()

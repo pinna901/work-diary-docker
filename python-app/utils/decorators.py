@@ -2,7 +2,10 @@
 from functools import wraps
 
 def validate_json(f):
-    """验证请求包含有效的 JSON 数据"""
+    """
+    Validates that the request contains valid JSON data.
+    验证请求包含有效的 JSON 数据
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         from flask import request, jsonify
