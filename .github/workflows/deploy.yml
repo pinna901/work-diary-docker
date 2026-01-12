@@ -45,7 +45,7 @@ jobs:
           find ./python-app -maxdepth 1 -type f -name "test_*.py" -o -name "*_test.py" || true
 
           echo "🏗️ docker build（禁用缓存，避免用旧镜像）："
-          docker build --no-cache -t test-image ./python-app
+          docker build -t test-image ./python-app
 
           echo "🔎 镜像内 /app 内容："
           docker run --rm test-image sh -lc "pwd; ls -la; find . -maxdepth 1 -type f -name 'test_*.py' -o -name '*_test.py' || true"
