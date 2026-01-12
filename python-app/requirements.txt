@@ -8,3 +8,4 @@ cryptography
 gunicorn
 pytest
 groq
+marshmallow==3.20.1
