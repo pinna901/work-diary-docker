@@ -44,7 +44,7 @@ jobs:
           echo "🔎 runner 上 python-app 里的测试文件："
           find ./python-app -maxdepth 1 -type f -name "test_*.py" -o -name "*_test.py" || true
 
-          echo "🏗️ docker build（禁用缓存，避免用旧镜像）："
+          echo "🏗️ docker build（启用缓存，加快构建速度）："
           docker build -t test-image ./python-app
 
           echo "🔎 镜像内 /app 内容："
