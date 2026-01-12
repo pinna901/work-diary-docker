@@ -4,3 +4,6 @@ mysql_data/
 redis_data/
 __pycache__/
 *.pyc
+*.bak
+.pytest_cache/
+data/
