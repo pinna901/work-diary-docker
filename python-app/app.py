@@ -8,6 +8,7 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 import time
+from sqlalchemy import text  # 👈 新增引入，用于测试连接
 
 def create_app(config_name=None):
     """应用工厂函数"""
@@ -22,6 +23,8 @@ def create_app(config_name=None):
     
     # 3. 初始化扩展
     CORS(app, resources={r"/api/*": {"origins": "*"}})
+    
+    # 🔥 核心修改：数据库初始化逻辑
     init_db_with_retry(app)
     
     # 4. 注册蓝图
@@ -63,14 +66,16 @@ def setup_logging(app):
 def init_db_with_retry(app):
     """初始化数据库（带重试）"""
     
-    # 🔥 新增：检测测试环境
+    # 🔥 关键修改 1：db.init_app 必须在循环外面执行！
+    # 否则重试时会报错 "SQLAlchemy instance has already been registered"
+    db.init_app(app)
+    
+    # 检测测试环境
     is_testing = app.config.get('TESTING') or os.getenv('TESTING') == 'true'
     
     if is_testing:
-        # 测试环境：快速初始化，不重试
         try:
             with app.app_context():
-                db.init_app(app)
                 db.create_all()
                 app.logger.info("✅ Test database connected (in-memory)")
                 return True
@@ -78,24 +83,38 @@ def init_db_with_retry(app):
             app.logger.warning(f"⚠️ Test database init failed: {e}")
             return False
     
-    # 生产环境：保持原有的重试逻辑
+    # 生产环境：重试逻辑
     retries = 0
     max_retries = 30
     retry_interval = 2
     
-    while retries < max_retries: 
-        try:
-            with app.app_context():
-                db.init_app(app)
-                db.create_all()
-                app.logger.info("✅ Database connected")
+    with app.app_context():
+        while retries < max_retries: 
+            try:
+                # 🔥 关键修改 2：先尝试连接，确保数据库服务已就绪
+                with db.engine.connect() as conn:
+                    conn.execute(text("SELECT 1"))
+                
+                # 连接成功后，再尝试创建表
+                # 如果表已存在，create_all 通常会忽略，但为了保险起见捕获异常
+                try:
+                    db.create_all()
+                except Exception as create_e:
+                    # 如果只是表已存在的错误，我们可以忽略它
+                    if "already exists" in str(create_e):
+                        app.logger.info("Tables already exist, skipping creation.")
+                    else:
+                        raise create_e
+
+                app.logger.info("✅ Database connected and initialized")
                 return True
-        except Exception as e: 
-            retries += 1
-            app.logger.warning(f"⏳ Waiting for database ({retries}/{max_retries})... Error: {e}")
-            time.sleep(retry_interval)
+                
+            except Exception as e: 
+                retries += 1
+                app.logger.warning(f"⏳ Waiting for database ({retries}/{max_retries})... Error: {str(e)}")
+                time.sleep(retry_interval)
     
-    app.logger.error("❌ Failed to connect to database")
+    app.logger.error("❌ Failed to connect to database after multiple retries")
     return False
 
 
@@ -123,6 +142,8 @@ def register_legacy_routes(app):
     from services.clock_in_service import ClockInService
     import redis
     
+    # 注意：这里实例化服务可能会依赖数据库连接
+    # 建议在具体路由函数内部实例化，或者确保数据库已连接
     diary_service = DiaryService()
     ai_service = AIService()
     
@@ -144,11 +165,10 @@ def register_legacy_routes(app):
             'api_version': 'v1'
         })
     
-    # 兼容旧的 /api/clock-in (保持向后兼容，同时保存到 MySQL 和 Redis)
+    # 兼容旧的 /api/clock-in
     @app.route('/api/clock-in', methods=['POST', 'GET'])
     def clock_in():
         try:
-            # 使用 ClockInService 创建打卡记录
             saved_record, count = clock_in_service.create_clock_in()
             return jsonify({'message': 'Clock in success!', 'count': count})
         except Exception as e:
