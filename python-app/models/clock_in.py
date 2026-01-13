@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from models import db
 
 class ClockIn(db.Model):
@@ -6,8 +6,8 @@ class ClockIn(db.Model):
     __tablename__ = 'clock_in'
     
     id = db.Column(db.Integer, primary_key=True)
-    clock_in_time = db.Column(db.DateTime, default=datetime.utcnow, index=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    clock_in_time = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), index=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     
     def __repr__(self):
         return f'<ClockIn {self.id}: {self.clock_in_time}>'

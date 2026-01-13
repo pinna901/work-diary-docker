@@ -1,6 +1,9 @@
 from repositories.clock_in_repository import ClockInRepository
 from models.clock_in import ClockIn
 import redis
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ClockInService:
     """打卡业务逻辑"""
@@ -22,7 +25,7 @@ class ClockInService:
                 count = self.redis_client.incr('daily_clock_in_count')
             except Exception as e:
                 # Redis 失败不影响主流程，记录日志即可
-                print(f"Redis error: {e}")
+                logger.error(f"Redis error: {e}")
                 count = self.repository.count_total()
         else:
             # 如果没有 Redis，从数据库统计

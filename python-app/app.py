@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from config import config
 from models import db, init_db
@@ -140,7 +140,6 @@ def register_legacy_routes(app):
     # 新增：打卡历史查询接口
     @app.route('/api/clock-in/history', methods=['GET'])
     def get_clock_in_history():
-        from flask import request
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 20, type=int)
         try:
@@ -153,7 +152,6 @@ def register_legacy_routes(app):
     # 兼容旧的 /api/diary
     @app.route('/api/diary', methods=['POST'])
     def add_diary_legacy():
-        from flask import request
         data = request.get_json()
         if not data or not data.get('content'):
             return jsonify({'error': '日记内容不能为空'}), 400
@@ -168,7 +166,6 @@ def register_legacy_routes(app):
     
     @app.route('/api/diary', methods=['GET'])
     def get_diary_legacy():
-        from flask import request
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 20, type=int)
         try:
@@ -180,7 +177,6 @@ def register_legacy_routes(app):
     # 兼容旧的 /api/ai-polish
     @app.route('/api/ai-polish', methods=['POST'])
     def ai_polish_legacy():
-        from flask import request
         if not ai_service.is_available():
             return jsonify({'error': 'AI service unavailable'}), 503
         data = request.get_json()
