@@ -59,7 +59,23 @@ jobs:
 
          
 
-      # 3. 部署
+      # 3. 清理旧容器
+      - name: Stop and Remove Old Containers
+        run: |
+          echo "🧹 停止并删除旧容器..."
+          
+          # 停止并删除所有服务（包括 volumes）
+          docker compose down -v || true
+          
+          # 强制删除可能残留的容器
+          docker rm -f work-redis work-mysql work-python-app work-nginx || true
+          
+          # 清理悬空的镜像和容器（可选，节省空间）
+          docker system prune -f || true
+          
+          echo "✅ 旧容器清理完成"
+
+      # 4. 部署
       - name: Deploy with Docker Compose
         # 把 Secret 映射为环境变量，这样最稳健
         env:
@@ -67,7 +83,7 @@ jobs:
           ENV_DB_NAME: ${{ secrets.DB_NAME }}
           ENV_GROQ_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "正在生成 .env 文件..."
+          echo "📝 正在生成 .env 文件..."
 
           # 简单的非空检查
           if [ -z "$ENV_MYSQL_PASS" ]; then
@@ -77,21 +93,23 @@ jobs:
 
           echo "MYSQL_ROOT_PASSWORD=$ENV_MYSQL_PASS" > .env
           echo "DB_NAME=$ENV_DB_NAME" >> .env
-          
           echo "GROQ_API_KEY=$ENV_GROQ_KEY" >> .env
 
-          echo "停止旧容器..."
-          docker compose --env-file .env down || true
-
-          echo "开始构建并启动容器..."
-          docker compose --env-file .env up -d --build --remove-orphans
-
-          echo "清理敏感文件..."
-          rm .env
-
+          echo "🚀 启动服务..."
+          docker compose up -d --build --force-recreate
           
+          echo "⏳ 等待服务启动..."
+          sleep 10
+          
+          echo "✅ 检查服务状态..."
+          docker compose ps
+          
+          echo "🎉 部署完成！"
+          
+          echo "🧹 清理敏感文件..."
+          rm -f .env
 
-      # 4. 清理镜像
+      # 5. 清理镜像
       - name: Cleanup
         run: |
           docker image prune -f
