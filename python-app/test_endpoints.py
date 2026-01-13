@@ -8,28 +8,6 @@ import os
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-@pytest.fixture
-def app():
-    """Create and configure a test app"""
-    os.environ['FLASK_ENV'] = 'development'
-    os.environ['MYSQL_ROOT_PASSWORD'] = 'test'
-    os.environ['DB_HOST'] = 'localhost'
-    os.environ['MYSQL_DATABASE'] = 'test_db'
-    
-    from app import create_app
-    
-    # Mock database initialization to avoid needing a real database
-    with patch('app.init_db_with_retry') as mock_init_db:
-        mock_init_db.return_value = True
-        app = create_app('development')
-        app.config['TESTING'] = True
-        yield app
-
-@pytest.fixture
-def client(app):
-    """Create a test client"""
-    return app.test_client()
-
 def test_root_endpoint(client):
     """Test the root endpoint returns JSON"""
     response = client.get('/')

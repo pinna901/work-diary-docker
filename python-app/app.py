@@ -62,20 +62,38 @@ def setup_logging(app):
 
 def init_db_with_retry(app):
     """初始化数据库（带重试）"""
+    
+    # 🔥 新增：检测测试环境
+    is_testing = app.config.get('TESTING') or os.getenv('TESTING') == 'true'
+    
+    if is_testing:
+        # 测试环境：快速初始化，不重试
+        try:
+            with app.app_context():
+                db.init_app(app)
+                db.create_all()
+                app.logger.info("✅ Test database connected (in-memory)")
+                return True
+        except Exception as e:
+            app.logger.warning(f"⚠️ Test database init failed: {e}")
+            return False
+    
+    # 生产环境：保持原有的重试逻辑
     retries = 0
     max_retries = 30
+    retry_interval = 2
     
-    while retries < max_retries:
+    while retries < max_retries: 
         try:
             with app.app_context():
                 db.init_app(app)
                 db.create_all()
                 app.logger.info("✅ Database connected")
                 return True
-        except Exception as e:
+        except Exception as e: 
             retries += 1
             app.logger.warning(f"⏳ Waiting for database ({retries}/{max_retries})... Error: {e}")
-            time.sleep(2)
+            time.sleep(retry_interval)
     
     app.logger.error("❌ Failed to connect to database")
     return False
