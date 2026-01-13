@@ -8,22 +8,6 @@ import os
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-@pytest.fixture
-def mock_redis():
-    """Create a mock Redis client"""
-    redis_mock = Mock()
-    redis_mock.incr = Mock(return_value=42)
-    redis_mock.ping = Mock(return_value=True)
-    return redis_mock
-
-@pytest.fixture
-def mock_db_session():
-    """Create a mock database session"""
-    with patch('models.db.session') as mock_session:
-        mock_session.add = Mock()
-        mock_session.commit = Mock()
-        yield mock_session
-
 def test_clock_in_model():
     """Test ClockIn model can be instantiated"""
     from models.clock_in import ClockIn

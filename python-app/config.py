@@ -43,3 +43,24 @@ config = {
     'production': ProductionConfig,
     'default': DevelopmentConfig
 }
+
+class TestingConfig(Config):
+    """测试环境配置"""
+    TESTING = True
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # 使用内存数据库
+    SQLALCHEMY_ECHO = False  # 关闭 SQL 日志
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    WTF_CSRF_ENABLED = False  # 测试时禁用 CSRF
+    
+    # 数据库重试配置
+    DB_RETRY_MAX = 1  # 测试环境只重试 1 次
+    DB_RETRY_INTERVAL = 0.1  # 重试间隔 0.1 秒
+
+# 在配置字典中添加
+config = {
+    'development': DevelopmentConfig,
+    'production': ProductionConfig,
+    'testing': TestingConfig,  # 🔥 添加这一行
+    'default': DevelopmentConfig
+}
