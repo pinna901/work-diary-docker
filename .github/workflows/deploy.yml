@@ -92,7 +92,7 @@ jobs:
           fi
 
           echo "MYSQL_ROOT_PASSWORD=$ENV_MYSQL_PASS" > .env
-          echo "DB_NAME=$ENV_DB_NAME" >> .env
+          echo "MYSQL_DATABASE=$ENV_DB_NAME" >> .env
           echo "GROQ_API_KEY=$ENV_GROQ_KEY" >> .env
 
           echo "🚀 启动服务..."
