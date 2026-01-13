@@ -207,6 +207,11 @@ def register_legacy_routes(app):
             return jsonify({'error': str(e)}), 500
 
 
-if __name__ == '__main__':
+# 为 Gunicorn 和直接运行提供 app 对象
+if __name__ == '__main__': 
+    # 直接使用 python app.py 运行
     app = create_app()
     app.run(host='0.0.0.0', port=5000, debug=False)
+else:
+    # 使用 Gunicorn 运行
+    app = create_app()
