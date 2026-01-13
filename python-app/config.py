@@ -40,9 +40,23 @@ class ProductionConfig(BaseConfig):
     SQLALCHEMY_POOL_SIZE = 10
     SQLALCHEMY_POOL_RECYCLE = 3600
 
+class TestingConfig(BaseConfig):
+    """测试环境配置"""
+    TESTING = True
+    DEBUG = True
+    # 关键修改：测试使用 SQLite 内存数据库
+    # 1. 速度极快
+    # 2. 避免测试数据污染 MySQL 开发库
+    # 3. 这里的 URI 会覆盖 BaseConfig 中的设置
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    
+    # 测试时关闭 CSRF 校验，方便 API 测试
+    WTF_CSRF_ENABLED = False
+
 # 配置字典
 config = {
     'development': DevelopmentConfig,
     'production': ProductionConfig,
+    'testing': TestingConfig,  # 👈 修复了这里的 KeyError
     'default': DevelopmentConfig
 }
