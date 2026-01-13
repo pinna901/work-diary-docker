@@ -96,7 +96,7 @@ jobs:
           echo "GROQ_API_KEY=$ENV_GROQ_KEY" >> .env
 
           echo "🚀 启动服务..."
-          docker compose up -d --build --force-recreate
+          docker compose --env-file .env up -d --build --force-recreate
           
           echo "⏳ 等待服务启动..."
           sleep 10
