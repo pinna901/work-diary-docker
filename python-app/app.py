@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from config import config
 from models import db, init_db
@@ -102,6 +102,7 @@ def register_legacy_routes(app):
     """注册兼容路由（保持向后兼容）"""
     from services.diary_service import DiaryService
     from services.ai_service import AIService
+    from services.clock_in_service import ClockInService
     import redis
     
     diary_service = DiaryService()
@@ -114,6 +115,9 @@ def register_legacy_routes(app):
     except:
         r = None
     
+    # 初始化 ClockInService
+    clock_in_service = ClockInService(redis_client=r)
+    
     @app.route('/')
     def hello():
         return jsonify({
@@ -122,21 +126,32 @@ def register_legacy_routes(app):
             'api_version': 'v1'
         })
     
-    # 兼容旧的 /api/clock-in
+    # 兼容旧的 /api/clock-in (保持向后兼容，同时保存到 MySQL 和 Redis)
     @app.route('/api/clock-in', methods=['POST', 'GET'])
     def clock_in():
-        if not r:
-            return jsonify({'error': 'Redis service unavailable'}), 503
         try:
-            count = r.incr('daily_clock_in_count')
+            # 使用 ClockInService 创建打卡记录
+            saved_record, count = clock_in_service.create_clock_in()
             return jsonify({'message': 'Clock in success!', 'count': count})
         except Exception as e:
+            app.logger.error(f'Clock in error: {e}')
+            return jsonify({'error': str(e)}), 500
+    
+    # 新增：打卡历史查询接口
+    @app.route('/api/clock-in/history', methods=['GET'])
+    def get_clock_in_history():
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        try:
+            result = clock_in_service.get_clock_in_history(page, per_page)
+            return jsonify(result), 200
+        except Exception as e:
+            app.logger.error(f'Get clock-in history error: {e}')
             return jsonify({'error': str(e)}), 500
     
     # 兼容旧的 /api/diary
     @app.route('/api/diary', methods=['POST'])
     def add_diary_legacy():
-        from flask import request
         data = request.get_json()
         if not data or not data.get('content'):
             return jsonify({'error': '日记内容不能为空'}), 400
@@ -151,7 +166,6 @@ def register_legacy_routes(app):
     
     @app.route('/api/diary', methods=['GET'])
     def get_diary_legacy():
-        from flask import request
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 20, type=int)
         try:
@@ -163,7 +177,6 @@ def register_legacy_routes(app):
     # 兼容旧的 /api/ai-polish
     @app.route('/api/ai-polish', methods=['POST'])
     def ai_polish_legacy():
-        from flask import request
         if not ai_service.is_available():
             return jsonify({'error': 'AI service unavailable'}), 503
         data = request.get_json()

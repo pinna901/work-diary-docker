@@ -219,6 +219,8 @@ POST /api/ai-polish
 
 ### 5. 打卡功能
 
+#### 5.1 执行打卡
+
 ```bash
 GET /api/clock-in
 POST /api/clock-in
@@ -226,7 +228,7 @@ POST /api/clock-in
 
 **请求示例**：
 ```bash
-curl http://localhost/api/clock-in
+curl -X POST http://localhost/api/clock-in
 ```
 
 **响应示例**：
@@ -239,8 +241,60 @@ curl http://localhost/api/clock-in
 
 **说明**：
 - 支持 GET 和 POST 两种方式
-- 计数器存储在 Redis 中
+- 同时保存到 MySQL 数据库和 Redis 计数器
 - 每次调用计数器 +1
+- 返回当前总打卡次数
+
+#### 5.2 查询打卡历史
+
+```bash
+GET /api/clock-in/history
+```
+
+**参数说明**：
+- `page`: 页码（默认：1）
+- `per_page`: 每页数量（默认：20，最大：100）
+
+**请求示例**：
+```bash
+# 获取第一页（默认 20 条）
+curl http://localhost/api/clock-in/history
+
+# 获取第 2 页，每页 10 条
+curl "http://localhost/api/clock-in/history?page=2&per_page=10"
+```
+
+**响应示例**：
+```json
+{
+  "total": 42,
+  "page": 1,
+  "per_page": 20,
+  "total_pages": 3,
+  "records": [
+    {
+      "id": 42,
+      "clock_in_time": "2026-01-13 09:30:00",
+      "created_at": "2026-01-13 09:30:00"
+    },
+    {
+      "id": 41,
+      "clock_in_time": "2026-01-12 14:20:00",
+      "created_at": "2026-01-12 14:20:00"
+    }
+  ]
+}
+```
+
+**字段说明**：
+- `total`: 总记录数
+- `page`: 当前页码
+- `per_page`: 每页条数
+- `total_pages`: 总页数
+- `records`: 打卡记录列表
+  - `id`: 记录 ID
+  - `clock_in_time`: 打卡时间
+  - `created_at`: 记录创建时间
 
 ---
 
