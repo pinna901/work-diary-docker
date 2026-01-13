@@ -59,18 +59,18 @@ def test_status_check(client):
 def test_clock_in_legacy(client):
     """Test legacy clock-in endpoint"""
     with patch('services.clock_in_service.ClockInService.create_clock_in') as mock_create:
-        # Mock 成功创建打卡记录
+        # Mock successful clock-in creation
         mock_clock_in = Mock()
         mock_clock_in.to_dict.return_value = {
             'id': 1,
             'clock_in_time': '2026-01-13 09:00:00',
             'created_at': '2026-01-13 09:00:00'
         }
-        mock_create.return_value = (mock_clock_in, 42)  # (记录对象, 总次数)
+        mock_create.return_value = (mock_clock_in, 42)  # (record object, total count)
         
         response = client.get('/api/clock-in')
         
-        # 应该返回成功
+        # Should return success
         assert response.status_code == 200
         data = response.get_json()
         assert 'count' in data
