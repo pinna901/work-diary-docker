@@ -58,17 +58,23 @@ def test_status_check(client):
 
 def test_clock_in_legacy(client):
     """Test legacy clock-in endpoint"""
-    with patch('redis.Redis') as mock_redis:
-        mock_instance = Mock()
-        mock_instance.ping.return_value = True
-        mock_instance.incr.return_value = 1
-        mock_redis.return_value = mock_instance
+    with patch('services.clock_in_service.ClockInService.create_clock_in') as mock_create:
+        # Mock successful clock-in creation
+        mock_clock_in = Mock()
+        mock_clock_in.to_dict.return_value = {
+            'id': 1,
+            'clock_in_time': '2026-01-13 09:00:00',
+            'created_at': '2026-01-13 09:00:00'
+        }
+        mock_create.return_value = (mock_clock_in, 42)  # (record object, total count)
         
-        # We need to reload the route after mocking
         response = client.get('/api/clock-in')
-        # If Redis is not available, it should return 503
-        # This is expected in test environment
-        assert response.status_code in [200, 503]
+        
+        # Should return success
+        assert response.status_code == 200
+        data = response.get_json()
+        assert 'count' in data
+        assert data['count'] == 42
 
 def test_add_diary_legacy_validation(client):
     """Test legacy diary endpoint validation"""
