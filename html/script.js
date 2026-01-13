@@ -71,6 +71,12 @@ async function clockIn() {
 
         // 成功后刷新数字
         checkStatus();
+        
+        // 如果打卡历史区域已打开，自动刷新历史记录
+        const historySection = document.getElementById('clock-in-history-section');
+        if (historySection && historySection.style.display !== 'none') {
+            loadClockInHistory();
+        }
 
     } catch (e) {
         console.error("JS 报错:", e);
@@ -149,4 +155,122 @@ async function askAI() {
         btn.innerText = originalText;
         btn.disabled = false;
     }
+}
+
+// ========== Clock-in History Feature ==========
+
+let currentHistoryPage = 1;
+
+// 切换打卡历史显示/隐藏
+function toggleClockInHistory() {
+    const historySection = document.getElementById('clock-in-history-section');
+    if (historySection.style.display === 'none') {
+        historySection.style.display = 'block';
+        loadClockInHistory(1);
+    } else {
+        historySection.style.display = 'none';
+    }
+}
+
+// 加载打卡历史
+async function loadClockInHistory(page = 1) {
+    currentHistoryPage = page;
+    const perPage = 20;
+    
+    try {
+        const res = await fetch(`${API_BASE}/clock-in/history?page=${page}&per_page=${perPage}`);
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.error || '加载打卡历史失败');
+        }
+        
+        renderClockInHistory(data);
+        renderClockInPagination(data);
+        
+    } catch (e) {
+        const listDiv = document.getElementById('clock-in-history-list');
+        listDiv.innerHTML = `<p style="color: red;">加载失败: ${e.message}</p>`;
+    }
+}
+
+// 渲染打卡历史列表
+function renderClockInHistory(data) {
+    const listDiv = document.getElementById('clock-in-history-list');
+    listDiv.innerHTML = '';
+    
+    if (data.records.length === 0) {
+        listDiv.innerHTML = '<p style="color: gray;">暂无打卡记录</p>';
+        return;
+    }
+    
+    // 按日期分组
+    const groupedByDate = {};
+    data.records.forEach(record => {
+        const date = record.clock_in_time.split(' ')[0];
+        if (!groupedByDate[date]) {
+            groupedByDate[date] = [];
+        }
+        groupedByDate[date].push(record);
+    });
+    
+    // 渲染每个日期组
+    Object.keys(groupedByDate).forEach(date => {
+        const dateGroup = document.createElement('div');
+        dateGroup.className = 'clock-in-date-group';
+        
+        const dateHeader = document.createElement('div');
+        dateHeader.className = 'clock-in-date-header';
+        dateHeader.innerHTML = `📅 ${date} (${groupedByDate[date].length} 次)`;
+        dateGroup.appendChild(dateHeader);
+        
+        groupedByDate[date].forEach(record => {
+            const item = document.createElement('div');
+            item.className = 'clock-in-item';
+            const time = record.clock_in_time.split(' ')[1];
+            item.innerHTML = `⏰ ${time}`;
+            dateGroup.appendChild(item);
+        });
+        
+        listDiv.appendChild(dateGroup);
+    });
+}
+
+// 渲染分页控件
+function renderClockInPagination(data) {
+    const paginationDiv = document.getElementById('clock-in-pagination');
+    paginationDiv.innerHTML = '';
+    
+    if (data.total_pages <= 1) {
+        return;
+    }
+    
+    const info = document.createElement('div');
+    info.style.marginBottom = '10px';
+    info.style.fontSize = '14px';
+    info.innerHTML = `共 ${data.total} 条记录，第 ${data.page}/${data.total_pages} 页`;
+    paginationDiv.appendChild(info);
+    
+    const btnContainer = document.createElement('div');
+    btnContainer.style.display = 'flex';
+    btnContainer.style.justifyContent = 'center';
+    btnContainer.style.gap = '10px';
+    
+    // 上一页按钮
+    if (data.page > 1) {
+        const prevBtn = document.createElement('button');
+        prevBtn.innerText = '← 上一页';
+        prevBtn.onclick = () => loadClockInHistory(data.page - 1);
+        btnContainer.appendChild(prevBtn);
+    }
+    
+    // 下一页按钮
+    if (data.page < data.total_pages) {
+        const nextBtn = document.createElement('button');
+        nextBtn.innerText = '下一页 →';
+        nextBtn.onclick = () => loadClockInHistory(data.page + 1);
+        btnContainer.appendChild(nextBtn);
+    }
+    
+    paginationDiv.appendChild(btnContainer);
 }

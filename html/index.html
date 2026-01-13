@@ -53,6 +53,16 @@
         <div class="count" id="day-count">--</div>
         <div id="status-msg" style="font-size: 12px; color: gray;">连接中...</div>
         <button onclick="clockIn()">⏰ 立即打卡</button>
+        <button onclick="toggleClockInHistory()">📋 查看打卡历史</button>
+    </div>
+
+    <!-- 打卡历史显示区域 -->
+    <div id="clock-in-history-section" style="display: none;">
+        <div class="card">
+            <h3>📋 打卡历史记录</h3>
+            <div id="clock-in-history-list"></div>
+            <div id="clock-in-pagination" style="margin-top: 15px;"></div>
+        </div>
     </div>
 
     <div class="card">
