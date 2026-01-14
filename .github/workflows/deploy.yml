@@ -65,7 +65,7 @@ jobs:
           echo "🧹 停止并删除旧容器..."
           
           # 停止并删除所有服务（包括 volumes）
-          docker compose down -v || true
+          docker compose down  || true
           
           # 强制删除可能残留的容器
           docker rm -f work-redis work-mysql work-python-app work-nginx || true
@@ -82,6 +82,8 @@ jobs:
           ENV_MYSQL_PASS: ${{ secrets.MYSQL_ROOT_PASSWORD }}
           ENV_DB_NAME: ${{ secrets.DB_NAME }}
           ENV_GROQ_KEY: ${{ secrets.GROQ_API_KEY }}
+          ENV_MYSQL_DATA_PATH:  ${{ secrets.MYSQL_DATA_PATH }}
+          ENV_REDIS_DATA_PATH: ${{ secrets.REDIS_DATA_PATH }}
         run: |
           echo "📝 正在生成 .env 文件..."
 
@@ -94,6 +96,8 @@ jobs:
           echo "MYSQL_ROOT_PASSWORD=$ENV_MYSQL_PASS" > .env
           echo "MYSQL_DATABASE=$ENV_DB_NAME" >> .env
           echo "GROQ_API_KEY=$ENV_GROQ_KEY" >> .env
+          echo "MYSQL_DATA_PATH=${ENV_MYSQL_DATA_PATH:-/home/pinna/my_prod_data/mysql_data}" >> .env
+          echo "REDIS_DATA_PATH=${ENV_REDIS_DATA_PATH:-/home/pinna/my_prod_data/redis_data}" >> .env
 
           echo "🚀 启动服务..."
           docker compose --env-file .env up -d --build --force-recreate
