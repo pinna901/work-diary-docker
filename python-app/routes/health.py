@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
-from models import db, WorkLog  # 导入 WorkLog 模型
-from services.cache_service import CacheService
+from models import db, ClockIn  # 🔥 直接从 models 导入
+from services. cache_service import CacheService
 
 health_bp = Blueprint('health', __name__)
 cache_service = CacheService()
@@ -16,14 +16,14 @@ def api_status():
     """详细状态检查"""
     try:
         # 测试数据库连接
-        db.session.execute(db. text('SELECT 1'))
+        db.session.execute(db.text('SELECT 1'))
         db_status = 'connected'
         
-        # 🔥 新增：查询打卡天数
-        work_count = WorkLog.query.count()
-    except Exception as e:
+        # 🔥 查询打卡次数
+        clock_count = ClockIn.query.count()
+    except Exception as e: 
         db_status = 'disconnected'
-        work_count = 0
+        clock_count = 0
     
     # 获取缓存统计
     cache_stats = cache_service.get_stats()
@@ -31,7 +31,7 @@ def api_status():
     return jsonify({
         'status': 'online',
         'database': db_status,
-        'cache':  cache_stats,
-        'count': work_count,  # 🔥 添加打卡天数
-        'db': db_status       # 🔥 添加前端期望的字段
+        'cache': cache_stats,
+        'count': clock_count,  # 打卡次数
+        'db': db_status        # 数据库状态
     }), 200
